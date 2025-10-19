@@ -17,18 +17,9 @@ class Sprite {
     this.framesElapsed = 0;
     this.framesHold = 5;
     this.offset = offset;
-    this.loaded = false;
-
-    this.image.onload = () => {
-      this.loaded = true;
-      this.width = (this.image.width / this.framesMax) * this.scale;
-      this.height = this.image.height * this.scale;
-    };
   }
 
   draw() {
-    if (!this.loaded) return;
-
     c.drawImage(
       this.image,
       this.framesCurrent * (this.image.width / this.framesMax),
@@ -112,22 +103,20 @@ class Fighter extends Sprite {
     this.draw();
     if (!this.dead) this.animateFrames();
 
-    // update posisi kotak serangan
+    // attack boxes
     this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
     this.attackBox.position.y = this.position.y + this.attackBox.offset.y;
 
-    // pergerakan
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
 
-    // ====== GRAVITY DENGAN LANTAI DINAMIS ======
-    // Lantai ditentukan relatif terhadap tinggi canvas
-    const floorOffset = 80; // jarak lantai dari bawah layar
-    const floorLevel = canvas.height - floorOffset;
+    // gravity function - PERBAIKAN: POSISI AWAL YANG BENAR
+    const groundLevel = canvas.height - 113; // 676 - 113 = 563
+    const characterHeight = this.height;
 
-    if (this.position.y + this.height + this.velocity.y >= floorLevel) {
+    if (this.position.y + characterHeight >= groundLevel) {
       this.velocity.y = 0;
-      this.position.y = floorLevel - this.height;
+      this.position.y = groundLevel - characterHeight; // 563 - 150 = 413
     } else {
       this.velocity.y += gravity;
     }

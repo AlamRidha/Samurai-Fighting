@@ -1,139 +1,212 @@
-// === SETUP CANVAS ===
 const canvas = document.getElementById("gameCanvas");
 const c = canvas.getContext("2d");
 
-// Fungsi untuk set ukuran canvas penuh layar
+// Set initial canvas size - TAMBAH LEBAR CANVAS DI SINI
 function setCanvasSize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = 1200; // DITAMBAH dari 1024 menjadi 1200
+  canvas.height = 676; // DITAMBAH proporsional dari 576 menjadi 676
 }
 
-// Panggil sekali saat load awal
+// Initialize canvas size
 setCanvasSize();
 
-// === KONSTANTA ===
+c.fillRect(0, 0, canvas.width, canvas.height);
+
 const gravity = 0.7;
 
-// === INISIALISASI SPRITE LATAR ===
 const background = new Sprite({
-  position: { x: 0, y: 0 },
+  position: {
+    x: 0,
+    y: 0,
+  },
   imageSrc: "./img/background.png",
 });
 
 const shop = new Sprite({
-  position: { x: 600, y: 128 },
+  position: {
+    x: 700, // Disesuaikan dengan canvas yang lebih lebar
+    y: 210, // Disesuaikan sedikit
+    // y: canvas.height - 465, // Disesuaikan sedikit
+  },
   imageSrc: "./img/shop.png",
   scale: 2.75,
   framesMax: 6,
 });
 
-// === PEMAIN (PLAYER 1) ===
+// POSISI PLAYER - disesuaikan dengan canvas yang lebih lebar
 const player = new Fighter({
-  position: { x: canvas.width * 0.25, y: 0 },
-  velocity: { x: 0, y: 0 },
-  offset: { x: 0, y: 0 },
+  position: {
+    x: 100, // Disesuaikan dari 0 menjadi 100
+    y: 330,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+  offset: {
+    x: 0,
+    y: 0,
+  },
   imageSrc: "./img/samuraiMack/Idle.png",
   framesMax: 8,
   scale: 2.5,
-  offset: { x: 215, y: 157 },
+  offset: {
+    x: 215,
+    y: 157,
+  },
   sprites: {
-    idle: { imageSrc: "./img/samuraiMack/Idle.png", framesMax: 8 },
-    run: { imageSrc: "./img/samuraiMack/Run.png", framesMax: 8 },
-    jump: { imageSrc: "./img/samuraiMack/Jump.png", framesMax: 2 },
-    fall: { imageSrc: "./img/samuraiMack/Fall.png", framesMax: 2 },
-    attack1: { imageSrc: "./img/samuraiMack/Attack1.png", framesMax: 6 },
+    idle: {
+      imageSrc: "./img/samuraiMack/Idle.png",
+      framesMax: 8,
+    },
+    run: {
+      imageSrc: "./img/samuraiMack/Run.png",
+      framesMax: 8,
+    },
+    jump: {
+      imageSrc: "./img/samuraiMack/Jump.png",
+      framesMax: 2,
+    },
+    fall: {
+      imageSrc: "./img/samuraiMack/Fall.png",
+      framesMax: 2,
+    },
+    attack1: {
+      imageSrc: "./img/samuraiMack/Attack1.png",
+      framesMax: 6,
+    },
     takeHit: {
       imageSrc: "./img/samuraiMack/Take Hit - white silhouette.png",
       framesMax: 4,
     },
-    death: { imageSrc: "./img/samuraiMack/Death.png", framesMax: 6 },
+    death: {
+      imageSrc: "./img/samuraiMack/Death.png",
+      framesMax: 6,
+    },
   },
   attackBox: {
-    offset: { x: 100, y: 50 },
+    offset: {
+      x: 100,
+      y: 50,
+    },
     width: 160,
     height: 50,
   },
 });
 
-// === MUSUH (PLAYER 2) ===
 const enemy = new Fighter({
-  position: { x: canvas.width * 0.75, y: 0 },
-  velocity: { x: 0, y: 0 },
+  position: {
+    x: 900, // Disesuaikan dari 400 menjadi 900
+    y: 300,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
   color: "blue",
-  offset: { x: -50, y: 0 },
+  offset: {
+    x: -50,
+    y: 0,
+  },
   imageSrc: "./img/kenji/Idle.png",
   framesMax: 4,
   scale: 2.5,
-  offset: { x: 215, y: 167 },
+  offset: {
+    x: 215,
+    y: 167,
+  },
   sprites: {
-    idle: { imageSrc: "./img/kenji/Idle.png", framesMax: 4 },
-    run: { imageSrc: "./img/kenji/Run.png", framesMax: 8 },
-    jump: { imageSrc: "./img/kenji/Jump.png", framesMax: 2 },
-    fall: { imageSrc: "./img/kenji/Fall.png", framesMax: 2 },
-    attack1: { imageSrc: "./img/kenji/Attack1.png", framesMax: 4 },
-    takeHit: { imageSrc: "./img/kenji/Take hit.png", framesMax: 3 },
-    death: { imageSrc: "./img/kenji/Death.png", framesMax: 7 },
+    idle: {
+      imageSrc: "./img/kenji/Idle.png",
+      framesMax: 4,
+    },
+    run: {
+      imageSrc: "./img/kenji/Run.png",
+      framesMax: 8,
+    },
+    jump: {
+      imageSrc: "./img/kenji/Jump.png",
+      framesMax: 2,
+    },
+    fall: {
+      imageSrc: "./img/kenji/Fall.png",
+      framesMax: 2,
+    },
+    attack1: {
+      imageSrc: "./img/kenji/Attack1.png",
+      framesMax: 4,
+    },
+    takeHit: {
+      imageSrc: "./img/kenji/Take hit.png",
+      framesMax: 3,
+    },
+    death: {
+      imageSrc: "./img/kenji/Death.png",
+      framesMax: 7,
+    },
   },
   attackBox: {
-    offset: { x: -170, y: 50 },
+    offset: {
+      x: -170,
+      y: 50,
+    },
     width: 170,
     height: 50,
   },
 });
 
-// === POSISI RESPONSIVE ===
-function updatePositions() {
-  player.position.x = canvas.width * 0.25;
-  player.position.y = canvas.height - 250;
-  enemy.position.x = canvas.width * 0.75;
-  enemy.position.y = canvas.height - 250;
-  shop.position.x = canvas.width * 0.6;
-}
+console.log(player);
 
-// Panggil di awal
-updatePositions();
-
-// === EVENT RESIZE ===
-function handleResize() {
-  setCanvasSize();
-  updatePositions();
-}
-window.addEventListener("resize", handleResize);
-
-// === TIMER ===
-decreaseTimer();
-
-// === KEYBOARD STATE ===
 const keys = {
-  a: { pressed: false },
-  d: { pressed: false },
-  ArrowRight: { pressed: false },
-  ArrowLeft: { pressed: false },
+  a: {
+    pressed: false,
+  },
+  d: {
+    pressed: false,
+  },
+  ArrowRight: {
+    pressed: false,
+  },
+  ArrowLeft: {
+    pressed: false,
+  },
 };
 
-// === ANIMASI ===
+decreaseTimer();
+
 function animate() {
   window.requestAnimationFrame(animate);
-
-  // Latar belakang
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Gambar background agar menyesuaikan ukuran canvas
-  c.drawImage(background.image, 0, 0, canvas.width, canvas.height);
-  shop.update();
+  // PERBAIKAN: Gambar background dengan cara yang benar
+  if (background.image.complete) {
+    c.drawImage(
+      background.image,
+      0,
+      0,
+      background.image.width,
+      background.image.height, // source
+      0,
+      0,
+      canvas.width,
+      canvas.height // destination - full canvas
+    );
+  } else {
+    // Fallback: gunakan update() biasa jika image belum loaded
+    background.update();
+  }
 
-  // Layer kabut putih tipis
+  shop.update();
   c.fillStyle = "rgba(255, 255, 255, 0.15)";
   c.fillRect(0, 0, canvas.width, canvas.height);
-
   player.update();
   enemy.update();
 
   player.velocity.x = 0;
   enemy.velocity.x = 0;
 
-  // Gerakan Player
+  // player movement
   if (keys.a.pressed && player.lastKey === "a") {
     player.velocity.x = -5;
     player.switchSprite("run");
@@ -144,10 +217,14 @@ function animate() {
     player.switchSprite("idle");
   }
 
-  if (player.velocity.y < 0) player.switchSprite("jump");
-  else if (player.velocity.y > 0) player.switchSprite("fall");
+  // jumping
+  if (player.velocity.y < 0) {
+    player.switchSprite("jump");
+  } else if (player.velocity.y > 0) {
+    player.switchSprite("fall");
+  }
 
-  // Gerakan Enemy
+  // Enemy movement
   if (keys.ArrowLeft.pressed && enemy.lastKey === "ArrowLeft") {
     enemy.velocity.x = -5;
     enemy.switchSprite("run");
@@ -158,35 +235,58 @@ function animate() {
     enemy.switchSprite("idle");
   }
 
-  if (enemy.velocity.y < 0) enemy.switchSprite("jump");
-  else if (enemy.velocity.y > 0) enemy.switchSprite("fall");
+  // jumping
+  if (enemy.velocity.y < 0) {
+    enemy.switchSprite("jump");
+  } else if (enemy.velocity.y > 0) {
+    enemy.switchSprite("fall");
+  }
 
-  // Collision Detection
+  // detect for collision & enemy gets hit
   if (
-    rectangularCollision({ rectangle1: player, rectangle2: enemy }) &&
+    rectangularCollision({
+      rectangle1: player,
+      rectangle2: enemy,
+    }) &&
     player.isAttacking &&
     player.framesCurrent === 4
   ) {
     enemy.takeHit();
     player.isAttacking = false;
-    gsap.to("#enemyHealth", { width: enemy.health + "%" });
+
+    gsap.to("#enemyHealth", {
+      width: enemy.health + "%",
+    });
   }
 
-  if (player.isAttacking && player.framesCurrent === 4)
+  // if player misses
+  if (player.isAttacking && player.framesCurrent === 4) {
     player.isAttacking = false;
+  }
 
+  // this is where our player gets hit
   if (
-    rectangularCollision({ rectangle1: enemy, rectangle2: player }) &&
+    rectangularCollision({
+      rectangle1: enemy,
+      rectangle2: player,
+    }) &&
     enemy.isAttacking &&
     enemy.framesCurrent === 2
   ) {
     player.takeHit();
     enemy.isAttacking = false;
-    gsap.to("#playerHealth", { width: player.health + "%" });
+
+    gsap.to("#playerHealth", {
+      width: player.health + "%",
+    });
   }
 
-  if (enemy.isAttacking && enemy.framesCurrent === 2) enemy.isAttacking = false;
+  // if player misses
+  if (enemy.isAttacking && enemy.framesCurrent === 2) {
+    enemy.isAttacking = false;
+  }
 
+  // end game based on health
   if (enemy.health <= 0 || player.health <= 0) {
     determineWinner({ player, enemy, timerId });
   }
@@ -194,7 +294,6 @@ function animate() {
 
 animate();
 
-// === KEYBOARD CONTROL ===
 window.addEventListener("keydown", (event) => {
   if (!player.dead) {
     switch (event.key) {
@@ -228,7 +327,7 @@ window.addEventListener("keydown", (event) => {
       case "ArrowUp":
         enemy.velocity.y = -20;
         break;
-      case "Control":
+      case "ArrowDown":
         enemy.attack();
         break;
     }
@@ -243,6 +342,10 @@ window.addEventListener("keyup", (event) => {
     case "a":
       keys.a.pressed = false;
       break;
+  }
+
+  // enemy keys
+  switch (event.key) {
     case "ArrowRight":
       keys.ArrowRight.pressed = false;
       break;
@@ -251,3 +354,28 @@ window.addEventListener("keyup", (event) => {
       break;
   }
 });
+
+// CSS STYLING UNTUK MEMBUAT CANVAS RESPONSIVE
+const style = document.createElement("style");
+style.textContent = `
+  #gameCanvas {
+    max-width: 100%;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+`;
+document.head.appendChild(style);
